@@ -1,0 +1,3 @@
+[submodule "wp-posts-to-posts"]
+	path = wp-posts-to-posts
+	url = git@github.com:scribu/wp-posts-to-posts.git
