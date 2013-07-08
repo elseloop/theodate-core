@@ -85,7 +85,7 @@ function theo_render_admin() {
           
           <thead>
             <tr>
-              <th>Order No.</th>
+              <th>Order</th>
               <th>Title</th>
               <th>Author</th>       
             </tr>
@@ -93,7 +93,7 @@ function theo_render_admin() {
           
           <tfoot>
             <tr>
-              <th>Order No.</th>
+              <th>Order</th>
               <th>Title</th>
               <th>Author</th>       
             </tr>
@@ -101,27 +101,56 @@ function theo_render_admin() {
           
           <tbody><?php
 
+            // start with the current issue; get id to pass
             $cur_issue_id = get_current_issue_id();
-            $issue        = get_single_issue( $cur_issue_id );
-            $issue_poems  = get_issue_poems( $cur_issue_id );
+            
+            // get contents of that issue
+            $issue_poems  = get_issue_poems( $cur_issue_id ); // wp obj
 
-            foreach ( $issue_poems as $key => $poem ) {
+            if( $issue_poems->have_posts() ) {
+
+              $i=1;
+
+              while( $issue_poems->have_posts() ) {
+                $issue_poems->the_post();
+
+                ?><tr>
+                    <td class="key"><?php echo $i; ?></td>
+                    <td><?php the_title(); ?></td>
+                    <td><?php
+
+                      $poet = get_single_poet( get_the_ID() );
+                      
+                      if( $poet && $poet->have_posts() ) {
+                        while( $poet->have_posts() ) {
+                          $poet->the_post();
+
+                          the_title();
+
+                        } // endwhile poet
+
+                        wp_reset_postdata(); // cleanup poet
+
+                      } // endif poet
+                      
+                    ?></td>
+                  <tr><?php  
+
+              $i++;
+
+              } // endwhile
+
+              wp_reset_postdata(); // cleanup
+
+            } else {
 
               ?><tr>
-                  <td><?php echo $key + 1; ?></td>
-                  <td><?php echo get_the_title( $poem->ID ); ?></td>
-                  <td><?php
+                  <td class="key">No poems in this issue yet. <a href="<?php echo admin_url( 'post-new.php?post_type=poetry' ); ?>">Add one?</a></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  </tr><?php
 
-                    $poet = get_single_poet( $poem->ID );
-
-                    echo "<pre>";
-                    print_r($poet);
-                    echo "</pre>";
-
-                  ?></td>
-                <tr><?php
-
-            }
+            }// endif poems
 
           ?></tbody>
 
@@ -133,31 +162,82 @@ function theo_render_admin() {
         
         <h2>Ekphrasis</h2>
 
-        <table class="widefat">
+        <table id="ekphrasis-table" class="widefat">
           
           <thead>
             <tr>
+              <th>Order</th>
               <th>Title</th>
               <th>Author</th>       
-              <th>Order No.</th>
             </tr>
           </thead>
           
           <tfoot>
             <tr>
+              <th>Order</th>
               <th>Title</th>
               <th>Author</th>       
-              <th>Order No.</th>
             </tr>
           </tfoot>
           
-          <tbody>
-           <tr>
-             <td>No posts available</td>
-             <td>&nbsp;</td>
-             <td>&nbsp;</td>
-           </tr>
-          </tbody>
+          <tbody><?php
+
+            // start with the current issue; get id to pass
+            $cur_issue_id = get_current_issue_id();
+            
+            // get contents of that issue
+            $issue_ekphrasis  = get_issue_ekphrasis( $cur_issue_id ); // wp obj
+
+            if( $issue_ekphrasis && $issue_ekphrasis->have_posts() ) {
+
+              $i=1;
+
+              while( $issue_ekphrasis->have_posts() ) {
+                $issue_ekphrasis->the_post();
+
+                ?><tr>
+                    <td class="key"><?php echo $i; ?></td>
+                    <td><?php the_title(); ?></td>
+                    <td><?php
+
+                      $poet = get_single_poet( get_the_ID() );
+                      
+                      if( $poet && $poet->have_posts() ) {
+                        while( $poet->have_posts() ) {
+                          $poet->the_post();
+
+                          the_title();
+
+                        } // endwhile poet
+
+                        wp_reset_postdata(); // cleanup poet
+
+                      } else {
+
+                        echo "N/A";
+
+                      }// endif poet
+                      
+                    ?></td>
+                  <tr><?php  
+
+              $i++;
+
+              } // endwhile ekphrasis
+
+              wp_reset_postdata();
+
+            } else {
+
+              ?><tr>
+                  <td class="key">No ekphrasis in this issue yet. <a href="<?php echo admin_url( 'post-new.php?post_type=ekphrasis' ); ?>">Add one?</a></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  </tr><?php
+
+            }// endif ekphrasis
+
+          ?></tbody>
 
         </table>
 
@@ -193,7 +273,8 @@ add_action( 'admin_enqueue_scripts', 'theo_admin_load_scripts' );
 
 // process ajax
 
-function theo_issue_toc_process_ajax() {
+// poetry
+function theo_issue_toc_poetry_process_ajax() {
   
   // if the request came from somewhere nasty, bail.
   if( !isset( $_POST[ 'theo_issue_toc_nonce' ] ) || !wp_verify_nonce( $_POST[ 'theo_issue_toc_nonce' ], 'theo-issue-toc-nonce' ) ) {
@@ -212,29 +293,53 @@ function theo_issue_toc_process_ajax() {
   
   } else { 
     
-    // load up on poems
-    $issue_poems  = get_issue_poems( $issue_id );
+    // get contents of that issue
+    $issue_poems  = get_issue_poems( $issue_id ); // wp obj
 
-    foreach ( $issue_poems as $key => $value ) {
-      
-      $poem_id  = $value->ID;
+    if( $issue_poems && $issue_poems->have_posts() ) {
+
+      $i=1;
+
+      while( $issue_poems->have_posts() ) {
+        $issue_poems->the_post();
+
+        ?><tr>
+            <td class="key"><?php echo $i; ?></td>
+            <td><?php the_title(); ?></td>
+            <td><?php
+
+              $poet = get_single_poet( get_the_ID() );
+              
+              if( $poet && $poet->have_posts() ) {
+                while( $poet->have_posts() ) {
+                  $poet->the_post();
+
+                  the_title();
+
+                } // endwhile poet
+
+                wp_reset_postdata(); // cleanup poet
+
+              } // endif poet
+              
+            ?></td>
+          <tr><?php  
+
+      $i++;
+
+      } // endwhile
+    
+      wp_reset_postdata(); // cleanup
+
+    } else {
 
       ?><tr>
-          <td><?php echo $key + 1; ?></td>
-          <td><?php echo get_the_title( $value->ID ); ?></td>
-          <td><?php
-            
-            $poet = get_single_poet($poem_id);
-      
-            echo "<pre>";
-            print_r($poet);
-            echo "</pre>";
-            
-          ?></td>
-          
-        <tr><?php
+          <td class="key">No poems in this issue yet. <a href="<?php echo admin_url( 'post-new.php?post_type=poetry' ); ?>">Add one?</a></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          </tr><?php
 
-    }
+    }// endif poems
 
     die();
 
@@ -242,4 +347,86 @@ function theo_issue_toc_process_ajax() {
 
 }
 
-add_action( 'wp_ajax_theo_load_issue', 'theo_issue_toc_process_ajax' );
+add_action( 'wp_ajax_theo_load_issue_poems', 'theo_issue_toc_poetry_process_ajax' );
+
+
+// ekphrasis ajax handling
+function theo_issue_toc_ekphrasis_process_ajax() {
+  
+  // if the request came from somewhere nasty, bail.
+  if( !isset( $_POST[ 'theo_issue_toc_nonce' ] ) || !wp_verify_nonce( $_POST[ 'theo_issue_toc_nonce' ], 'theo-issue-toc-nonce' ) ) {
+    
+    die( 'You do not have permission to perform this action.' );  
+  
+  }
+
+  // get the id of the selected issue
+  $issue_id = $_POST[ 'issue_id' ];
+
+  // if there aren't any issues, tell 'em and bail
+  if ( 'empty' == $issue_id ) {
+    
+    die( 'You haven&rsquo;t created any issues yet.' );
+  
+  } else {
+    
+    // get contents of that issue
+    $issue_ekphrasis  = get_issue_ekphrasis( $issue_id ); // wp obj
+
+    if( $issue_ekphrasis && $issue_ekphrasis->have_posts() ) {
+
+      $i=1;
+
+      while( $issue_ekphrasis->have_posts() ) {
+        $issue_ekphrasis->the_post();
+
+        ?><tr>
+            <td class="key"><?php echo $i; ?></td>
+            <td><?php the_title(); ?></td>
+            <td><?php
+
+              $poet = get_single_poet( get_the_ID() );
+              
+              if( $poet && $poet->have_posts() ) {
+                while( $poet->have_posts() ) {
+                  $poet->the_post();
+
+                  the_title();
+
+                } // endwhile poet
+
+                wp_reset_postdata(); // cleanup poet
+
+              } else {
+
+                echo "N/A";
+
+              }// endif poet
+              
+            ?></td>
+          <tr><?php  
+
+      $i++;
+
+      } // endwhile ekphrasis
+
+      wp_reset_postdata();
+
+    } else {
+
+      // if no posts...
+      ?><tr>
+          <td class="key">No ekphrasis in this issue yet. <a href="<?php echo admin_url( 'post-new.php?post_type=ekphrasis' ); ?>">Add one?</a></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          </tr><?php
+
+    }// endif ekphrasis
+
+    die();
+
+  } 
+
+}
+
+add_action( 'wp_ajax_theo_load_issue_ekphrasis', 'theo_issue_toc_ekphrasis_process_ajax' );
