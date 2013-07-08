@@ -1,19 +1,6 @@
 <?php
 /**
  *
- * Post Type Functions
- *
- * @package     Theodate Core Functionality
- * @subpackage  Post Type Functions
- * @copyright   Copyright (c) 2013, Dan Manchester
- * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since       0.1
- *
-*/
-
-
-/**
- *
  * 	Setup Post Types
  *
  * 	Registers the Issue, Poetry, Author, and Ekphrasis post types.
@@ -21,9 +8,6 @@
  *	Filters use a theo_POSTTYPE_labels and theo_POSTTYPE_supports naming structure.
  *	See Get Default Lable below for more options.
  *
- * 	@access      private
- * 	@since       0.1 
- * 	@return      void
 */
 
 function theo_setup_theo_post_types() {
@@ -34,22 +18,21 @@ function theo_setup_theo_post_types() {
 	/* DEAL WITH THIS MESS LATER */
 	$issue_archives = true;
 	// Check to see if archives have been disabled elsewhere via constant
-	if ( defined( 'theo_DISABLE_ISSUE_ARCHIVE' ) && theo_DISABLE_ISSUE_ARCHIVE == true ) {
+	if ( defined( 'THEO_DISABLE_ISSUE_ARCHIVE' ) && THEO_DISABLE_ISSUE_ARCHIVE == true ) {
 		$issue_archives = false;
 	}
 	
 	$issue_slug = 'issue';
 	// Check to see if slug has been redefined elsewhere via constant
-	if ( defined( 'theo_ISSUE_SLUG' ) ) {
-		$issue_slug = theo_SLUG;
+	if ( defined( 'THEO_ISSUE_SLUG' ) ) {
+		$issue_slug = THEO_ISSUE_SLUG;
 	}
 	
 	$issue_rewrite = array( 'slug' => $issue_slug, 'with_front' => false );
-	if ( defined( 'theo_DISABLE_ISSUE_REWRITE' ) && theo_DISABLE_REWRITE == true ) {
+	if ( defined( 'THEO_DISABLE_ISSUE_REWRITE' ) && THEO_DISABLE_ISSUE_REWRITE == true ) {
 		$issue_rewrite = false;
 	}
 	/* DEAL WITH THE ABOVE MESS LATER */
-	
 	
 	$issue_labels =  apply_filters( 'theo_issue_labels', array(
 		'name' => '%2$s',
@@ -94,18 +77,18 @@ function theo_setup_theo_post_types() {
 	/* DEAL WITH THIS MESS LATER */
 	$poetry_archives = true;
 	// Check to see if archives have been disabled elsewhere via constant
-	if ( defined( 'theo_DISABLE_POETRY_ARCHIVE' ) && theo_DISABLE_POETRY_ARCHIVE == true ) {
+	if ( defined( 'THEO_DISABLE_POETRY_ARCHIVE' ) && THEO_DISABLE_POETRY_ARCHIVE == true ) {
 		$poetry_archives = false;
 	}
 	
 	$poetry_slug = 'poetry';
 	// Check to see if slug has been redefined elsewhere via constant
-	if ( defined( 'theo_POETRY_SLUG' ) ) {
-		$poetry_slug = theo_SLUG;
+	if ( defined( 'THEO_POETRY_SLUG' ) ) {
+		$poetry_slug = THEO_POETRY_SLUG;
 	}
 	
 	$poetry_rewrite = array( 'slug' => $poetry_slug, 'with_front' => false );
-	if ( defined( 'theo_DISABLE_POETRY_REWRITE' ) && theo_DISABLE_POETRY_REWRITE == true ) {
+	if ( defined( 'THEO_DISABLE_POETRY_REWRITE' ) && THEO_DISABLE_POETRY_REWRITE == true ) {
 		$poetry_rewrite = false;
 	}
 	/* DEAL WITH THE ABOVE MESS LATER */
@@ -155,18 +138,18 @@ function theo_setup_theo_post_types() {
 	/* DEAL WITH THIS MESS LATER */
 	$theo_author_archives = true;
 	// Check to see if archives have been disabled elsewhere via constant
-	if ( defined( 'theo_DISABLE_AUTHOR_ARCHIVE' ) && theo_DISABLE_AUTHOR_ARCHIVE == true ) {
+	if ( defined( 'THEO_DISABLE_AUTHOR_ARCHIVE' ) && THEO_DISABLE_AUTHOR_ARCHIVE == true ) {
 		$theo_authorarchives = false;
 	}
 	
 	$theo_author_slug = 'authors';
 	// Check to see if slug has been redefined elsewhere via constant
-	if ( defined( 'theo_AUTHOR_SLUG' ) ) {
-		$theo_author_slug = theo_AUTHOR_SLUG;
+	if ( defined( 'THEO_AUTHOR_SLUG' ) ) {
+		$theo_author_slug = THEO_AUTHOR_SLUG;
 	}
 	
 	$theo_author_rewrite = array( 'slug' => $theo_author_slug, 'with_front' => false );
-	if ( defined( 'theo_DISABLE_AUTHOR_REWRITE' ) && theo_DISABLE_AUTHOR_REWRITE == true ) {
+	if ( defined( 'THEO_DISABLE_AUTHOR_REWRITE' ) && THEO_DISABLE_AUTHOR_REWRITE == true ) {
 		$theo_author_rewrite = false;
 	}
 	/* DEAL WITH THE ABOVE MESS LATER */
@@ -215,7 +198,7 @@ function theo_setup_theo_post_types() {
 	/* DEAL WITH THIS MESS LATER */
 	$ekphrasis_archives = true;
 	// Check to see if archives have been disabled elsewhere via constant
-	if ( defined( 'theo_DISABLE_ekphrasis_ARCHIVE' ) && theo_DISABLE_ekphrasis_ARCHIVE == true ) {
+	if ( defined( 'THEO_DISABLE_ekphrasis_ARCHIVE' ) && THEO_DISABLE_ekphrasis_ARCHIVE == true ) {
 		$ekphrasis_archives = false;
 	}
 	
@@ -226,7 +209,7 @@ function theo_setup_theo_post_types() {
 	}
 	
 	$ekphrasis_rewrite = array( 'slug' => $ekphrasis_slug, 'with_front' => false );
-	if ( defined( 'theo_DISABLE_ekphrasis_REWRITE' ) && theo_DISABLE_ekphrasis_REWRITE == true ) {
+	if ( defined( 'THEO_DISABLE_ekphrasis_REWRITE' ) && THEO_DISABLE_ekphrasis_REWRITE == true ) {
 		$ekphrasis_rewrite = false;
 	}
 	/* DEAL WITH THE ABOVE MESS LATER */
