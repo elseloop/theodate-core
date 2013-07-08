@@ -41,7 +41,7 @@ include_once( THEO_DIR . '/lib/wp-lit-journal/lit-journal-functions.php' );
 
 // P2P
 include_once( THEO_DIR . '/lib/p2p/posts-to-posts.php' );
-
+include_once( THEO_DIR . '/lib/wp-lit-journal/p2p-connections.php' );
 // Metaboxes
 //include_once( THEO_DIR . '/lib/functions/metaboxes.php' );
  
