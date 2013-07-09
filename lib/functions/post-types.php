@@ -124,8 +124,8 @@ function theo_setup_theo_post_types() {
 		'rewrite' => $poetry_rewrite,
 		'capability_type' => 'post',
 		'has_archive' => $poetry_archives, 
-		'hierarchical' => false,
-		'supports' => apply_filters( 'theo_poetry_supports', array( 'title', 'editor', 'thumbnail' ) ),
+		'hierarchical' => true,
+		'supports' => apply_filters( 'theo_poetry_supports', array( 'title', 'editor', 'thumbnail', 'page-attributes' ) ),
 	); 
 	register_post_type( 'poetry', $poetry_args );
 	
@@ -245,8 +245,8 @@ function theo_setup_theo_post_types() {
 		'rewrite' => $ekphrasis_rewrite,
 		'capability_type' => 'post',
 		'has_archive' => $ekphrasis_archives, 
-		'hierarchical' => false,
-		'supports' => apply_filters( 'theo_ekphrasis_supports', array( 'title', 'editor', 'thumbnail' ) ),
+		'hierarchical' => true,
+		'supports' => apply_filters( 'theo_ekphrasis_supports', array( 'title', 'editor', 'thumbnail', 'page-attributes' ) ),
 	); 
 	register_post_type( 'ekphrasis', $ekphrasis_args );
 	
