@@ -73,9 +73,11 @@ function get_issue_poems($issue_id) {
 
       // Find connected poems
       $issue_poems = new WP_Query( array(
-        'connected_type' => 'poem_to_issue',
+        'connected_type'  => 'poem_to_issue',
         'connected_items' => $issue->get_queried_object(),
-        'nopaging' => true,
+        'nopaging'        => true,
+        'orderby'         =>  'menu_order',
+        'order'           =>  'asc'
       ) );
 
       if( $issue_poems->have_posts() ) {
@@ -110,9 +112,11 @@ function get_issue_ekphrasis($issue_id) {
 
       // Find connected poems
       $issue_poems = new WP_Query( array(
-        'connected_type' => 'ekphrasis_to_issue',
+        'connected_type'  => 'ekphrasis_to_issue',
         'connected_items' => $issue->get_queried_object(),
-        'nopaging' => true,
+        'nopaging'        => true,
+        'orderby'         =>  'menu_order',
+        'order'           =>  'asc'
       ) );
 
       if( $issue_poems->have_posts() ) {

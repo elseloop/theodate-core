@@ -81,7 +81,7 @@ function theo_render_admin() {
         
         <h2>Poetry</h2>
 
-        <table id="poetry-table" class="widefat">
+        <table id="poetry-table" class="wp-list-table widefat fixed posts issue-toc-list">
           
           <thead>
             <tr>
@@ -114,9 +114,17 @@ function theo_render_admin() {
               while( $issue_poems->have_posts() ) {
                 $issue_poems->the_post();
 
-                ?><tr>
-                    <td class="key"><?php echo $i; ?></td>
-                    <td><?php the_title(); ?></td>
+                global $post;
+
+                ?><tr id="theo_poem_item_<?php echo get_the_id(); ?>" class="theo-content-list">
+                    <td class="key"><?php echo $post->menu_order + 1; ?></td>
+                    <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
+                      <div class="row-actions">
+                        <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
+                        &nbsp;|&nbsp;
+                        <span class="view"><a href="<?php the_permalink(); ?>">View</a></span>
+                      </div>
+                    </td>
                     <td><?php
 
                       $poet = get_single_poet( get_the_ID() );
@@ -134,7 +142,7 @@ function theo_render_admin() {
                       } // endif poet
                       
                     ?></td>
-                  <tr><?php  
+                  </tr><?php  
 
               $i++;
 
@@ -148,7 +156,7 @@ function theo_render_admin() {
                   <td class="key">No poems in this issue yet. <a href="<?php echo admin_url( 'post-new.php?post_type=poetry' ); ?>">Add one?</a></td>
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>
-                  </tr><?php
+                </tr><?php
 
             }// endif poems
 
@@ -162,7 +170,7 @@ function theo_render_admin() {
         
         <h2>Ekphrasis</h2>
 
-        <table id="ekphrasis-table" class="widefat">
+        <table id="ekphrasis-table" class="wp-list-table widefat fixed posts issue-toc-list">
           
           <thead>
             <tr>
@@ -195,9 +203,16 @@ function theo_render_admin() {
               while( $issue_ekphrasis->have_posts() ) {
                 $issue_ekphrasis->the_post();
 
-                ?><tr>
-                    <td class="key"><?php echo $i; ?></td>
-                    <td><?php the_title(); ?></td>
+                global $post;
+
+                ?><tr id="theo_ekphrasis_item_<?php echo get_the_id(); ?>" class="theo-content-list">
+                    <td class="key"><?php echo $post->menu_order + 1; ?></td>
+                    <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
+                      <div class="row-actions">
+                        <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
+                        &nbsp;|&nbsp;
+                        <span class="view"><a href="<?php the_permalink(); ?>">View</a></span>
+                      </div></td>
                     <td><?php
 
                       $poet = get_single_poet( get_the_ID() );
@@ -219,7 +234,7 @@ function theo_render_admin() {
                       }// endif poet
                       
                     ?></td>
-                  <tr><?php  
+                  </tr><?php  
 
               $i++;
 
@@ -233,7 +248,7 @@ function theo_render_admin() {
                   <td class="key">No ekphrasis in this issue yet. <a href="<?php echo admin_url( 'post-new.php?post_type=ekphrasis' ); ?>">Add one?</a></td>
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>
-                  </tr><?php
+                </tr><?php
 
             }// endif ekphrasis
 
@@ -256,7 +271,11 @@ function theo_admin_load_scripts( $hook ) {
   if( $hook != $theo_toc_page )
     return;
 
-  wp_enqueue_script( 'theo-issue-ajax', THEO_URL . '/lib/wp-lit-journal/js/theo-issue-ajax.js', array( 'jquery' ), null, true );
+  wp_enqueue_style( 'theo-admin-styles', THEO_URL . '/lib/wp-lit-journal/css/admin.css', '', false, 'all' );
+
+  wp_enqueue_script('jquery-ui-sortable');
+  wp_enqueue_script( 'theo-issue-ajax'    , THEO_URL . '/lib/wp-lit-journal/js/theo-issue-ajax.js'    , array( 'jquery' ), null, true );
+  wp_enqueue_script( 'theo-issue-sortable', THEO_URL . '/lib/wp-lit-journal/js/theo-issue-sortable.js', array( 'jquery' ), null, true );  
 
   wp_localize_script( 'theo-issue-ajax', 'theo_issue_vars', array(
 
@@ -303,9 +322,17 @@ function theo_issue_toc_poetry_process_ajax() {
       while( $issue_poems->have_posts() ) {
         $issue_poems->the_post();
 
-        ?><tr>
-            <td class="key"><?php echo $i; ?></td>
-            <td><?php the_title(); ?></td>
+        global $post;
+
+        ?><tr id="theo_poem_item_<?php echo get_the_id(); ?>" class="theo-content-list">
+            <td class="key"><?php echo $post->menu_order + 1; ?></td>
+            <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
+                <div class="row-actions">
+                  <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
+                  &nbsp;|&nbsp;
+                  <span class="view"><a href="<?php the_permalink(); ?>">View</a></span>
+                </div>
+            </td>
             <td><?php
 
               $poet = get_single_poet( get_the_ID() );
@@ -323,7 +350,7 @@ function theo_issue_toc_poetry_process_ajax() {
               } // endif poet
               
             ?></td>
-          <tr><?php  
+          </tr><?php  
 
       $i++;
 
@@ -337,7 +364,7 @@ function theo_issue_toc_poetry_process_ajax() {
           <td class="key">No poems in this issue yet. <a href="<?php echo admin_url( 'post-new.php?post_type=poetry' ); ?>">Add one?</a></td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
-          </tr><?php
+        </tr><?php
 
     }// endif poems
 
@@ -380,9 +407,16 @@ function theo_issue_toc_ekphrasis_process_ajax() {
       while( $issue_ekphrasis->have_posts() ) {
         $issue_ekphrasis->the_post();
 
-        ?><tr>
-            <td class="key"><?php echo $i; ?></td>
-            <td><?php the_title(); ?></td>
+        global $post;
+
+        ?><tr id="theo_ekphrasis_item_<?php echo get_the_id(); ?>" class="theo-content-list">
+            <td class="key"><?php echo $post->menu_order + 1; ?></td>
+            <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
+                <div class="row-actions">
+                  <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
+                  &nbsp;|&nbsp;
+                  <span class="view"><a href="<?php the_permalink(); ?>">View</a></span>
+                </div>
             <td><?php
 
               $poet = get_single_poet( get_the_ID() );
@@ -404,7 +438,7 @@ function theo_issue_toc_ekphrasis_process_ajax() {
               }// endif poet
               
             ?></td>
-          <tr><?php  
+          </tr><?php  
 
       $i++;
 
@@ -419,7 +453,7 @@ function theo_issue_toc_ekphrasis_process_ajax() {
           <td class="key">No ekphrasis in this issue yet. <a href="<?php echo admin_url( 'post-new.php?post_type=ekphrasis' ); ?>">Add one?</a></td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
-          </tr><?php
+        </tr><?php
 
     }// endif ekphrasis
 
@@ -430,3 +464,29 @@ function theo_issue_toc_ekphrasis_process_ajax() {
 }
 
 add_action( 'wp_ajax_theo_load_issue_ekphrasis', 'theo_issue_toc_ekphrasis_process_ajax' );
+
+
+
+
+function theo_update_order() {
+  
+  $new_poem_order  = $_POST['theo_poem_item'];
+
+  foreach ($new_poem_order as $key => $value) {
+    
+    wp_update_post(
+      array(
+        'ID'          =>  $value,
+        'menu_order'  =>  $key
+      )
+    );
+
+  } // endforeach
+  
+  echo json_encode($new_poem_order);
+
+  die();
+}
+
+add_action('wp_ajax_theo_update_order', 'theo_update_order');
+
