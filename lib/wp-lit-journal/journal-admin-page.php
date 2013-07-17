@@ -116,8 +116,8 @@ function theo_render_admin() {
 
                 global $post;
 
-                ?><tr id="theo_poem_item_<?php echo get_the_id(); ?>" class="theo-content-list">
-                    <td class="key"><?php echo $post->menu_order + 1; ?></td>
+                ?><tr id="theo_poem_item_<?php echo get_the_id(); ?>" class="theo-content-poetry-list theo-content-list">
+                    <td class="key"><?php echo $post->menu_order; ?></td>
                     <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
                       <div class="row-actions">
                         <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
@@ -205,8 +205,8 @@ function theo_render_admin() {
 
                 global $post;
 
-                ?><tr id="theo_ekphrasis_item_<?php echo get_the_id(); ?>" class="theo-content-list">
-                    <td class="key"><?php echo $post->menu_order + 1; ?></td>
+                ?><tr id="theo_ekphrasis_item_<?php echo get_the_id(); ?>" class="theo-content-ekphrasis-list theo-content-list">
+                    <td class="key"><?php echo $post->menu_order; ?></td>
                     <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
                       <div class="row-actions">
                         <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
@@ -274,8 +274,9 @@ function theo_admin_load_scripts( $hook ) {
   wp_enqueue_style( 'theo-admin-styles', THEO_URL . '/lib/wp-lit-journal/css/admin.css', '', false, 'all' );
 
   wp_enqueue_script('jquery-ui-sortable');
-  wp_enqueue_script( 'theo-issue-ajax'    , THEO_URL . '/lib/wp-lit-journal/js/theo-issue-ajax.js'    , array( 'jquery' ), null, true );
-  wp_enqueue_script( 'theo-issue-sortable', THEO_URL . '/lib/wp-lit-journal/js/theo-issue-sortable.js', array( 'jquery' ), null, true );  
+  wp_enqueue_script( 'theo-issue-ajax'              , THEO_URL . '/lib/wp-lit-journal/js/theo-issue-ajax.js'              , array( 'jquery' ), null, true );
+  wp_enqueue_script( 'theo-issue-poetry-sortable'   , THEO_URL . '/lib/wp-lit-journal/js/theo-issue-poems-sortable.js'    , array( 'jquery' ), null, true );
+  wp_enqueue_script( 'theo-issue-ekphrasis-sortable', THEO_URL . '/lib/wp-lit-journal/js/theo-issue-ekphrasis-sortable.js', array( 'jquery' ), null, true );
 
   wp_localize_script( 'theo-issue-ajax', 'theo_issue_vars', array(
 
@@ -324,8 +325,8 @@ function theo_issue_toc_poetry_process_ajax() {
 
         global $post;
 
-        ?><tr id="theo_poem_item_<?php echo get_the_id(); ?>" class="theo-content-list">
-            <td class="key"><?php echo $post->menu_order + 1; ?></td>
+        ?><tr id="theo_poem_item_<?php echo get_the_id(); ?>" class="theo-content-poetry-list theo-content-list">
+            <td class="key"><?php echo $post->menu_order; ?></td>
             <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
                 <div class="row-actions">
                   <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
@@ -409,8 +410,8 @@ function theo_issue_toc_ekphrasis_process_ajax() {
 
         global $post;
 
-        ?><tr id="theo_ekphrasis_item_<?php echo get_the_id(); ?>" class="theo-content-list">
-            <td class="key"><?php echo $post->menu_order + 1; ?></td>
+        ?><tr id="theo_ekphrasis_item_<?php echo get_the_id(); ?>" class="theo-content-ekphrasis-list theo-content-list">
+            <td class="key"><?php echo $post->menu_order; ?></td>
             <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
                 <div class="row-actions">
                   <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
@@ -468,7 +469,7 @@ add_action( 'wp_ajax_theo_load_issue_ekphrasis', 'theo_issue_toc_ekphrasis_proce
 
 
 
-function theo_update_order() {
+function theo_update_poetry_order() {
   
   $new_poem_order  = $_POST['theo_poem_item'];
 
@@ -477,7 +478,7 @@ function theo_update_order() {
     wp_update_post(
       array(
         'ID'          =>  $value,
-        'menu_order'  =>  $key
+        'menu_order'  =>  $key + 1
       )
     );
 
@@ -488,5 +489,29 @@ function theo_update_order() {
   die();
 }
 
-add_action('wp_ajax_theo_update_order', 'theo_update_order');
+add_action( 'wp_ajax_theo_update_poetry_order', 'theo_update_poetry_order' );
+
+
+
+function theo_update_ekphrasis_order() {
+  
+  $new_poem_order  = $_POST['theo_ekphrasis_item'];
+
+  foreach ($new_poem_order as $key => $value) {
+    
+    wp_update_post(
+      array(
+        'ID'          =>  $value,
+        'menu_order'  =>  $key + 1
+      )
+    );
+
+  } // endforeach
+  
+  echo json_encode($new_poem_order);
+
+  die();
+}
+
+add_action( 'wp_ajax_theo_update_ekphrasis_order', 'theo_update_ekphrasis_order' );
 

@@ -26,7 +26,10 @@ function get_current_issue_id() {
   $args = array(
     'post_type'       =>  'issue',
     'fields'          =>  'ids',
-    'posts_per_page'  =>  1
+    'posts_per_page'  =>  1,
+    'orderby'         =>  'meta_value id',
+    'meta_key'        =>  'issue_is_current_issue',
+    'meta_value'      =>  '1'
   );
 
   $issue  = new WP_Query( $args );
@@ -221,3 +224,54 @@ function get_single_poet($poem_id) {
   } // endif
 
 } // get_single_poet
+
+
+// get issue meta
+// returns array of meta data
+function theo_get_issue_meta( $id = 0 ) {
+
+  if ( function_exists('get_field') ) {
+
+    $issue_cover          = get_field( 'issue_cover_image', $id );
+    $issue_volume         = get_field( 'issue_volume_number', $id );
+    $issue_number         = get_field( 'issue_number', $id );
+    $issue_date           = get_field( 'issue_publication_date_description', $id );
+    $issue_cover_credits  = get_field( 'issue_cover_image_credits', $id );
+    $issue_home_desc      = get_field( 'issue_homepage_description', $id );
+
+    $meta_check           = array(
+      $issue_cover,
+      $issue_volume,
+      $issue_number,
+      $issue_date,
+      $issue_cover_credits,
+      $issue_home_desc
+    );
+
+    foreach ( $meta_check as $meta ) {
+    
+      if ( ! empty ( $meta ) ) {
+        $meta = $meta;
+      } else {
+        $meta = false; // give something to test against
+      }
+      
+    } // endforeach $meta_check
+
+    $issue_meta = array(
+
+      'cover'           =>  $issue_cover,
+      'volume'          =>  $issue_volume,
+      'number'          =>  $issue_number,
+      'vol_no'          =>  $issue_volume . '.' . $issue_number,
+      'date'            =>  $issue_date,
+      'cover_credits'   =>  $issue_cover_credits,
+      'home_desc'       =>  $issue_home_desc
+
+    );
+
+    return $issue_meta;
+
+  } // endif function_exists(get_field)
+
+} // end theo_get_issue_meta
