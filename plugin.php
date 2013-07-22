@@ -36,8 +36,11 @@ include_once( THEO_DIR . '/lib/functions/post-types.php' );
 include_once( THEO_DIR . '/lib/functions/taxonomies.php' );
 
 // Lit Journal Admin
-include_once( THEO_DIR . '/lib/wp-lit-journal/journal-admin-page.php'    );
-include_once( THEO_DIR . '/lib/wp-lit-journal/lit-journal-functions.php' );
+include_once( THEO_DIR . '/lib/wp-lit-journal/journal-admin-page.php'         );
+include_once( THEO_DIR . '/lib/wp-lit-journal/admin-scripts.php'              );
+include_once( THEO_DIR . '/lib/wp-lit-journal/journal-toc-ajax-poetry.php'    );
+include_once( THEO_DIR . '/lib/wp-lit-journal/journal-toc-ajax-ekphrasis.php' );
+include_once( THEO_DIR . '/lib/wp-lit-journal/lit-journal-functions.php'      );
 
 // P2P
 include_once( THEO_DIR . '/lib/p2p/posts-to-posts.php' );
