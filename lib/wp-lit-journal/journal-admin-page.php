@@ -47,26 +47,28 @@ function theo_render_admin() {
 
           <select name="issues" id="theo-issues-select"><?php
             
-            $issues = get_posts(
-              array(
-                'post_type'       =>  'issue',
-                'posts_per_page'  =>  -1
-              )
-            );
-            
-            if( $issues ) :
+            $cur_issue  = get_current_issue_id( $admin = true );
+            $cur_status = theo_print_status($cur_issue);
+
+            echo '<option class="current-issue" value="' . $cur_issue . '">' . get_the_title( $cur_issue ) . " " . $cur_status . '</option>';
+
+            $issues = theo_get_filtered_issue_list( $admin = true );
+
+            if ( $issues && ! is_wp_error( $issues ) ) {
 
                 foreach( $issues as $issue ) {
 
-                  echo '<option value="' . $issue->ID . '">' . get_the_title( $issue->ID ) . '</option>'; 
+                  $status = theo_print_status($issue->ID);
+
+                  echo '<option class="back-issue" value="' . $issue->ID . '">' . get_the_title( $issue->ID ) . " " . $status . '</option>';
                 
                 }
               
-            else :
+            } else {
               
               echo '<option value="empty">No issues</option>';
 
-            endif;
+            }
           
           ?></select>
 
