@@ -109,7 +109,7 @@ function theo_render_admin() {
             // get contents of that issue
             $issue_poems  = get_issue_poems( $cur_issue_id ); // wp obj
 
-            if( $issue_poems->have_posts() ) {
+            if( $issue_poems ) {
 
               $i=1;
 
@@ -117,10 +117,11 @@ function theo_render_admin() {
                 $issue_poems->the_post();
 
                 global $post;
+                $poem_status = theo_print_status( get_the_id() );
 
                 ?><tr id="theo_poem_item_<?php echo get_the_id(); ?>" class="theo-content-poetry-list theo-content-list">
                     <td class="key"><?php echo $post->menu_order; ?></td>
-                    <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
+                    <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title() . " <strong>" . $poem_status . "</strong>"; ?></a></strong>
                       <div class="row-actions">
                         <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
                         &nbsp;|&nbsp;
@@ -206,10 +207,11 @@ function theo_render_admin() {
                 $issue_ekphrasis->the_post();
 
                 global $post;
+                $ekphrasis_status = theo_print_status( get_the_id() );
 
                 ?><tr id="theo_ekphrasis_item_<?php echo get_the_id(); ?>" class="theo-content-ekphrasis-list theo-content-list">
                     <td class="key"><?php echo $post->menu_order; ?></td>
-                    <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title(); ?></a></strong>
+                    <td><strong><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>"><?php the_title() . " <strong>" . $ekphrasis_status . "</strong>"; ?></a></strong>
                       <div class="row-actions">
                         <span class="edit"><a href="<?php echo admin_url( 'post.php?post=' . get_the_id() . '&action=edit' ); ?>">Edit</a></span>
                         &nbsp;|&nbsp;
