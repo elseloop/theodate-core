@@ -6,6 +6,7 @@
   *
   * Helper functions to make organizing content by issue easier
   *
+  * I'll get this into a Class soon. I just started in and it got messy, like it does.
   *
   */
 
@@ -21,15 +22,24 @@
 
 
 // get current issue id
-function get_current_issue_id() {
+// @param $admin true if listing posts in admin; checks for editor-level caps
+function get_current_issue_id( $admin = false ) {
+
+  if ( $admin && current_user_can( 'delete_others_posts' ) ) {
+    $status = array( 'publish', 'pending', 'draft', 'future', 'private' );
+  } else {
+    $status = 'publish';
+  }
 
   $args = array(
     'post_type'       =>  'issue',
     'fields'          =>  'ids',
     'posts_per_page'  =>  1,
-    'orderby'         =>  'meta_value id',
+    'orderby'         =>  'meta_value ID',
     'meta_key'        =>  'issue_is_current_issue',
-    'meta_value'      =>  '1'
+    'meta_value'      =>  '1',
+    'order'           =>  'desc',
+    'post_status'     =>  $status
   );
 
   $issue  = new WP_Query( $args );
@@ -63,12 +73,75 @@ function get_single_issue( $id = '' ) {
 } // get_single_issue
 
 
+// get issue status
+function theo_print_status($id) {
+
+  $status = get_post_status( $id );
+
+  switch( $status ) {
+
+    case "pending":
+      $detail = "(Pending)";
+      break;
+    case "draft":
+      $detail = "(Draft)";
+      break;
+    case "future":
+      $detail = "(Scheduled)";
+      break;
+    case "private":
+      $detail = "(Private)";
+      break;
+    default:
+      $detail = "";
+      break;  
+
+  } // end switch
+
+  return $detail;
+
+} // end get issue status
+
+
+// get filtered issue list
+// remove current issue from list then return the rest
+// used on the issue toc admin page
+// @param $admin true ito show protected posts in admin
+function theo_get_filtered_issue_list( $admin = true ) {
+
+  $cur_id = get_current_issue_id( true );
+
+  if ( $admin && current_user_can( 'delete_others_posts' ) ) {
+    $status = array( 'publish', 'pending', 'draft', 'future', 'private' );
+  } else {
+    $status = 'publish';
+  }
+
+  $issues = get_posts(
+    array(
+      'post_type'       =>  'issue',
+      'posts_per_page'  =>  -1,
+      'exclude'         =>  $cur_id,
+      'post_status'     =>  $status
+    )
+  );
+
+  return $issues;
+
+} // end theo_get_filtered_issue_list
+
 
 // get issue poems
 // @param $issue_id
-function get_issue_poems($issue_id) {
+function get_issue_poems($issue_id, $admin = false) {
 
   $issue  = get_single_issue( $issue_id );
+
+  if ( $admin && current_user_can( 'delete_others_posts' ) ) {
+    $status = array( 'publish', 'pending', 'draft', 'future', 'private' );
+  } else {
+    $status = 'publish';
+  }
 
   if ( $issue->have_posts() ) { 
     while ( $issue->have_posts() ) {
@@ -76,11 +149,12 @@ function get_issue_poems($issue_id) {
 
       // Find connected poems
       $issue_poems = new WP_Query( array(
-        'connected_type'  => 'poem_to_issue',
-        'connected_items' => $issue->get_queried_object(),
-        'nopaging'        => true,
+        'connected_type'  =>  'poem_to_issue',
+        'connected_items' =>  $issue->get_queried_object(),
+        'nopaging'        =>  true,
         'orderby'         =>  'menu_order',
-        'order'           =>  'asc'
+        'order'           =>  'asc',
+        'post_status'     =>  $status
       ) );
 
       if( $issue_poems->have_posts() ) {
@@ -105,9 +179,15 @@ function get_issue_poems($issue_id) {
 
 // get issue ekphrasis
 // @param $issue_id
-function get_issue_ekphrasis($issue_id) {
+function get_issue_ekphrasis($issue_id, $admin = false) {
 
   $issue  = get_single_issue( $issue_id );
+
+  if ( $admin && current_user_can( 'delete_others_posts' ) ) {
+    $status = array( 'publish', 'pending', 'draft', 'future', 'private' );
+  } else {
+    $status = 'publish';
+  }
 
   if ( $issue->have_posts() ) { 
     while ( $issue->have_posts() ) {
@@ -119,7 +199,8 @@ function get_issue_ekphrasis($issue_id) {
         'connected_items' => $issue->get_queried_object(),
         'nopaging'        => true,
         'orderby'         =>  'menu_order',
-        'order'           =>  'asc'
+        'order'           =>  'asc',
+        'post_status'     =>  $status
       ) );
 
       if( $issue_poems->have_posts() ) {
