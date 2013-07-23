@@ -63,7 +63,7 @@ function theo_issue_toc_poetry_process_ajax() {
 
       $i++;
 
-      } // endwhile
+      } // endwhile poems
     
       wp_reset_postdata(); // cleanup
 
